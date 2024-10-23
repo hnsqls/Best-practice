@@ -184,7 +184,30 @@ public class UserHolder {
 }
 ```
 
-tips:需要注意的是，上述使用mybatis-Plus的查出的user,直接保存在了服务器的session中，不应该查出来一些不重要的字段比如更新时间，还有就是密码敏感信息，怎么办呢？可以使用@JsonIgnore忽略一些字段信息。或者就是重新定义ThreadLocal,重新定义泛型去除敏感信息。
+加入拦截器
+
+```java
+@Configuration
+public class WebMvcConfig implements WebMvcConfigurer {
+
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LoginInterceptor())
+                .excludePathPatterns(
+                        "/user/code",
+                        "/user/login",
+                        "/shop-type/**",
+                        "/shop/**",
+                        "/blog/hot"
+                );
+    }
+}
+```
+
+
+
+tips:需要注意的是，上述使用mybatis-Plus的查出的user,直接保存在了服务器的session中，不应该查出来一些不重要的字段比如更新时间，还有就是密码敏感信息，怎么办呢？可以使用select 需要的字段。或者就是重新定义ThreadLocal,重新定义泛型去除敏感信息。
 
 
 
@@ -352,6 +375,29 @@ public class LoginInterceptor implements HandlerInterceptor {
     }
 }
 
+```
+
+注册拦截器
+
+```java
+@Configuration
+public class WebMvcConfig implements WebMvcConfigurer {
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LoginInterceptor(stringRedisTemplate))
+                .excludePathPatterns(
+                        "/user/code",
+                        "/user/login",
+                        "shop-type/**",
+                        "shop/**",
+                        "blog/hot"
+                );
+    }
+}
 ```
 
 
