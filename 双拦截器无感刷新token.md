@@ -1,6 +1,6 @@
 # 双拦截器无感刷新token
 
-分析：单个拦截器，只拦截需要用户登录才能访问的页面，假如用户登录之后，访问不需要拦截的页面，比如说主页，拦截器并不会执行，token也不会刷新。
+分析：单个拦截器，只拦截需要用户登录才能访问的页面，假如用户登录之后，访问不需要拦截的页面，比如说主页，拦截器并不会执行，token也不会刷新，即使用户正在使用token因为长时间不刷新回过期。
 
 解决：可以在引入一个拦截器，拦截所有的请求，该拦截器的主要目的就是刷新token,
 
@@ -89,7 +89,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 //        return true;
 
 
-        // todo: 但拦截器 token登录方式
+        // todo: 单拦截器 token登录方式
 //        // TODO 1. 获取token
 //        String token = request.getHeader("authorization");
 //        if (StrUtil.isBlank(token)) {
